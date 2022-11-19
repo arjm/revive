@@ -27,14 +27,16 @@ services:
       - SPARK_SSL_ENABLED=no
     ports:
       - '8080:8080'
-    command: sh -c "sleep 5s ; spark-submit --master local compute_segments.py"
+    command: sh -c "sleep 10s ; spark-submit --master local compute_segments.py"
   flask:
     build: ./api
     container_name: api
     restart: always
     environment:
-            - APP_NAME=api.py
-    expose:
-            - 5000
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5000
+    ports:
+      - "5000:5000"
     depends_on:
-            - mysql  
+            - mysql
+    command: sh -c "sleep 10s ; python3 app.py -h='0.0.0.0'"
