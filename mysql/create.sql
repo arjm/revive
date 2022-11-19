@@ -1,6 +1,6 @@
-create database campaign;
+CREATE DATABASE IF NOT EXISTS campaign;
 
-CREATE TABLE `campaign.voucher_log` (
+CREATE TABLE  IF NOT EXISTS `voucher_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `country` varchar(100) NOT NULL,
   `total_orders` int(11) NOT NULL,

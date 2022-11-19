@@ -1,24 +1,40 @@
-version: "3.7"
+version: '3.7'
 
 services:
-
-        flask:
-                build: ./api
-                container_name: api
-                restart: always
-                environment:
-                        - APP_NAME=api.py
-                expose:
-                        - 5000
-                depends_on:
-                        - mysql
-
-        mysql:         
-                build: ./api
-                restart: always
-                environment:
-                        MYSQL_DATABASE: 'campaign'
-                        MYSQL_ROOT_PASSWORD: 'root'
-                ports:
-                        - '3306:3306'
-
+  mysql:         
+    build: ./mysql
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'campaign'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ["CMD-SHELL", 'mysqladmin ping']
+      interval: 10s
+      timeout: 2s
+      retries: 10            
+  spark:
+    build: ./pyspark
+    container_name: spark
+    image: docker.io/bitnami/spark:3.3
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - '8080:8080'
+    command: sh -c "sleep 5s ; spark-submit --master local compute_segments.py"
+  flask:
+    build: ./api
+    container_name: api
+    restart: always
+    environment:
+            - APP_NAME=api.py
+    expose:
+            - 5000
+    depends_on:
+            - mysql  
