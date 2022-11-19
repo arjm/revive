@@ -1,10 +1,10 @@
 # Revive
 
 ## How to run
-1. Make sure you have installed and running. If not, then install the latest docker version: https://docs.docker.com/engine/install/
+1. Make sure you have Docker installed and running. If not, then install the latest docker version: https://docs.docker.com/engine/install/
 2. docker-compose build
 3. docker-compose up -d
-4. Wait for spark job to finish. Step 3 log should end with "Batch pipeline completed successfully!"
+4. Wait for spark job to finish. Step 3 logs should end with "Batch pipeline completed successfully!"
 5. Run the following command to test the output: python3 test.py
 
 
