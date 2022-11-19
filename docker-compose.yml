@@ -34,9 +34,9 @@ services:
     restart: always
     environment:
       - FLASK_RUN_HOST=0.0.0.0
-      - FLASK_RUN_PORT=5000
+      - FLASK_RUN_PORT=9999
     ports:
-      - "5000:5000"
+      - "9999:9999"
     depends_on:
             - mysql
     command: sh -c "sleep 10s ; python3 app.py -h='0.0.0.0'"
