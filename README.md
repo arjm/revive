@@ -5,7 +5,7 @@
 2. ```git clone``` this project. ```cd revive```
 3. ```docker-compose build```
 4. ```docker-compose up```
-5. Wait for spark job to finish. Step 3 logs should end with "spark exited with code 0", or, if you ran step 4 command in detach (-d) mode then wait for 20 seconds
+5. Wait for spark job to finish. Step 4 logs should end with "spark exited with code 0", or, if you ran step 4 command in detach (-d) mode then wait for 20 seconds
 6. Unit tests will automatically run as a part of step 4, it takes around 30 seconds to start executing unit test cases. To run unittest container on demand, run: ```docker-compose up unittest```
 
 
