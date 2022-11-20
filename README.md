@@ -2,10 +2,11 @@
 
 ## How to run
 1. Make sure you have Docker installed and running. If not, then install the latest docker version: https://docs.docker.com/engine/install/
-2. ```docker-compose build```
-3. ```docker-compose up```
-4. Wait for spark job to finish. Step 3 logs should end with "spark exited with code 0", or, if you ran step 3 command in detach (-d) mode then wait for 20 seconds
-5. Unit tests will automatically run as a part of step 3, it takes around 30 seconds to start executing unit test cases. To run unittest container on demand, run: ```docker-compose up unittest```
+2. ```git clone``` this project. ```cd revive```
+3. ```docker-compose build```
+4. ```docker-compose up```
+5. Wait for spark job to finish. Step 3 logs should end with "spark exited with code 0", or, if you ran step 4 command in detach (-d) mode then wait for 20 seconds
+6. Unit tests will automatically run as a part of step 4, it takes around 30 seconds to start executing unit test cases. To run unittest container on demand, run: ```docker-compose up unittest```
 
 
 ## Architecture
@@ -13,7 +14,7 @@
 
 
 ## Debugging errors
-1. If you get "Port already in use" error while runing step 3 (from "How to run"), then find and kill the process already running on that port. Re-run step 3
+1. If you get "Port already in use" error while runing step 3 (from "How to run"), then find and kill the process already running on that port. Re-run step 4
 2. Clean up existing container: ```docker-compose down --remove-orphans```
 
 
