@@ -39,4 +39,10 @@ services:
       - "9999:9999"
     depends_on:
             - mysql
-    command: sh -c "sleep 10s ; python3 app.py -h='0.0.0.0'"
+    command: sh -c "sleep 15s ; python3 app.py -h='0.0.0.0'"
+  unittest:
+    build: ./unittest
+    container_name: unittest
+    depends_on:
+            - mysql
+    command: sh -c "sleep 25s ; python3 test.py"

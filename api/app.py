@@ -6,12 +6,6 @@ import mysql.connector
 
 app = Flask(__name__)
 
-mydb = mysql.connector.connect(
-      host="mysql",
-      user="root",
-      passwd="root",
-      database="campaign"
-)
 
 range_frequency = {0 : 4, 5 : 13, 12 : 37, 38 : sys.maxsize}
 range_recency = {30 : 60, 61 : 90, 91 : 120, 121 : 180, 181: sys.maxsize}
@@ -43,18 +37,28 @@ def _get_voucher_from_frequency_segement(data):
     """Gets the voucher amount from the frequency segement"""
     total_orders = data["total_orders"]
     range = _get_frequency_range(total_orders)
-
     result = {}
 
     if range:
-        cursor = mydb.cursor()
+        db = mysql.connector.connect(
+            host="mysql",
+            user="root",
+            passwd="root",
+            database="campaign"
+        )
+        cursor = db.cursor()
         sql = f"select voucher_amount from voucher_frequent_segment where total_orders >={range[0]} AND total_orders <= {range[1]} order by count desc limit 1";
-        print(sql)
-        cursor.execute(sql)        
-        for row in cursor.fetchall():
-            result["voucher_amount"] = row[0]
+        try:
+            cursor.execute(sql)        
+            for row in cursor.fetchall():
+                result["voucher_amount"] = row[0]
+        finally:
+            cursor.close()
+            db.close()
     else:
         result["voucher_amount"] = 0
+
+    print(result,  flush=True)
     return result
 
 
@@ -80,12 +84,21 @@ def _get_voucher_from_recency_segement(data):
     result = {}
 
     if range:
-        cursor = mydb.cursor()
+        db = mysql.connector.connect(
+            host="mysql",
+            user="root",
+            passwd="root",
+            database="campaign"
+        )
+        cursor = db.cursor()
         sql = f"select voucher_amount from voucher_recency_segment where days_since >={range[0]} AND days_since <= {range[1]} order by count desc limit 1";
-        print(sql)
-        cursor.execute(sql)        
-        for row in cursor.fetchall():
-            result["voucher_amount"] = row[0]
+        try:
+            cursor.execute(sql)        
+            for row in cursor.fetchall():
+                result["voucher_amount"] = row[0]
+        finally:
+            cursor.close()
+            db.close()
     else:
         result["voucher_amount"] = 0
     return result
@@ -99,4 +112,4 @@ def _get_recency_range(last_order_delta_days: int):
 
     
 if __name__ == "__main__":
-    app.run(port=9999, host='0.0.0.0', threaded=True)
+    app.run(port=9999, host='0.0.0.0', threaded=True, debug=True)

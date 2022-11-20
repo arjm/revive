@@ -6,19 +6,19 @@ __author__      = "Arjit Malviya"
 
 import mysql.connector
 
+from pyspark.context import SparkContext
 from pyspark.sql import Window
 from pyspark.sql.functions import *
 from pyspark.sql.functions import row_number
-
-from pyspark.context import SparkContext
+from pyspark.sql.types import IntegerType
 from pyspark.sql.session import SparkSession
 
 SQL_TABLE_FREQUENT_SEGEMENT = "voucher_frequent_segment"
 SQL_TABLE_RECENCY_SEGEMENT = "voucher_recency_segment"
 
-def create_frequent_segment(df_voucher_logs, countries):
+def create_frequent_segment(df_voucher_logs, countries_filter):
       """Created frequency based segement based on number of orders for customer"""
-      df_voucher_logs_filtered = df_voucher_logs.where(col("country_code").isin (countries))\
+      df_voucher_logs_filtered = df_voucher_logs.where(col("country_code").isin (countries_filter))\
             .filter("voucher_amount is not null AND total_orders > 0")
 
       df_voucher_logs_filtered_ordered = df_voucher_logs_filtered.orderBy("voucher_amount", ascending=False)\
@@ -33,10 +33,10 @@ def create_frequent_segment(df_voucher_logs, countries):
       save_to_mysql(df_voucher_final, SQL_TABLE_FREQUENT_SEGEMENT)
 
 
-def create_recency_segement(df_voucher_logs, countries):
+def create_recency_segement(df_voucher_logs, countries_filter):
       """Created frequency based segement based on days since last customer order by a customer"""
 
-      df_voucher_logs_peru = df_voucher_logs.where(col("country_code").isin (countries))\
+      df_voucher_logs_peru = df_voucher_logs.where(col("country_code").isin (countries_filter))\
             .filter("voucher_amount is not null AND total_orders > 0")
 
       import pyspark.sql.functions as F
@@ -67,9 +67,10 @@ def save_to_mysql(data_frame_to_save, table_name):
 sc = SparkContext.getOrCreate();
 spark = SparkSession(sc)
 
-df_voucher_logs = spark.read.parquet("data.parquet.gzip")
+df_voucher_logs = spark.read.parquet("data.parquet.gzip").withColumn("total_orders", col("total_orders").cast(IntegerType()))
 
 countries_filter = ['Peru']
 create_frequent_segment(df_voucher_logs, countries_filter)
 create_recency_segement(df_voucher_logs, countries_filter)
 print("Batch pipeline completed successfully!")
+
